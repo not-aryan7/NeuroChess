@@ -6,6 +6,7 @@ import { GameStatus } from "./components/GameStatus";
 import { useChessGame } from "./hooks/useChessGame";
 import { useCursorNavigation } from "./hooks/useCursorNavigation";
 import { useStockfish } from "./hooks/useStockfish";
+import { useEEGInput } from "./hooks/useEEGInput";
 import "./App.css";
 
 function App() {
@@ -39,11 +40,21 @@ function App() {
     deselect();
   }, [deselect]);
 
-  const { cursorSquare } = useCursorNavigation(
+  const { cursorSquare, handleEEGCommand } = useCursorNavigation(
     handleSelect,
     handleCancel,
     turn === "w" && !isGameOver
   );
+
+  // EEG headset integration
+  const {
+    isConnected: eegConnected,
+    isConnecting: eegConnecting,
+    lastCommand: eegLastCommand,
+    error: eegError,
+    connect: eegConnect,
+    disconnect: eegDisconnect,
+  } = useEEGInput(handleEEGCommand);
 
   // Trigger AI move when it's black's turn
   useEffect(() => {
@@ -87,7 +98,34 @@ function App() {
           <span className="logo-quest">Quest</span>
         </h1>
         <span className="subtitle">EEG-Controlled Chess</span>
-        <span className="demo-badge">DEMO MODE</span>
+
+        {!eegConnected ? (
+          <button
+            className="eeg-btn eeg-connect-btn"
+            onClick={eegConnect}
+            disabled={eegConnecting}
+          >
+            {eegConnecting ? "Connecting..." : "Connect EEG"}
+          </button>
+        ) : (
+          <button
+            className="eeg-btn eeg-disconnect-btn"
+            onClick={eegDisconnect}
+          >
+            Disconnect EEG
+          </button>
+        )}
+
+        {eegConnected && eegLastCommand && (
+          <span className="eeg-indicator">
+            EEG: {eegLastCommand.command} ({Math.round(eegLastCommand.confidence * 100)}%)
+          </span>
+        )}
+
+        {eegError && <span className="eeg-error">{eegError}</span>}
+
+        {!eegConnected && <span className="demo-badge">DEMO MODE</span>}
+        {eegConnected && <span className="eeg-badge">EEG LIVE</span>}
       </header>
 
       <main className="game-container">
