@@ -60,10 +60,11 @@ export class EEGService {
   }
 
   /**
-   * Tell the backend to connect to the Emotiv headset.
+   * Tell the backend to connect to EEG source.
+   * mode="demo" uses fake data, mode="live" uses real Emotiv headset.
    */
-  async connectHeadset(): Promise<{ status: string; message?: string }> {
-    const res = await fetch(`${API_BASE}/eeg/connect`, { method: "POST" });
+  async connectHeadset(mode: "demo" | "live" = "demo"): Promise<{ status: string; mode?: string; message?: string }> {
+    const res = await fetch(`${API_BASE}/eeg/connect?mode=${mode}`, { method: "POST" });
     return res.json();
   }
 

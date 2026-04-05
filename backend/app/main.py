@@ -32,14 +32,24 @@ async def eeg_status():
 
 
 @app.post("/eeg/connect")
-async def eeg_connect():
-    """Connect to the Emotiv Insight headset via Cortex API."""
+async def eeg_connect(mode: str = "demo"):
+    """
+    Connect to EEG source.
+    mode=demo  → fake EEG data (no headset needed)
+    mode=live  → real Emotiv Insight via Cortex API
+    """
     global eeg_stream
     try:
-        from .hardware import EEGStream
-        eeg_stream = EEGStream()
-        await eeg_stream.start()
-        return {"status": "connected", "session": eeg_stream.client.session_id}
+        if mode == "live":
+            from .hardware import EEGStream
+            eeg_stream = EEGStream()
+            await eeg_stream.start()
+            return {"status": "connected", "mode": "live", "session": eeg_stream.client.session_id}
+        else:
+            from .hardware.fake_stream import FakeEEGStream
+            eeg_stream = FakeEEGStream()
+            await eeg_stream.start()
+            return {"status": "connected", "mode": "demo"}
     except Exception as e:
         return {"status": "error", "message": str(e)}
 

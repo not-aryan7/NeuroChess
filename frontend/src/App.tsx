@@ -100,32 +100,41 @@ function App() {
         <span className="subtitle">EEG-Controlled Chess</span>
 
         {!eegConnected ? (
-          <button
-            className="eeg-btn eeg-connect-btn"
-            onClick={eegConnect}
-            disabled={eegConnecting}
-          >
-            {eegConnecting ? "Connecting..." : "Connect EEG"}
-          </button>
+          <div className="eeg-buttons">
+            <button
+              className="eeg-btn eeg-demo-btn"
+              onClick={() => eegConnect("demo")}
+              disabled={eegConnecting}
+            >
+              {eegConnecting ? "Connecting..." : "Demo EEG"}
+            </button>
+            <button
+              className="eeg-btn eeg-connect-btn"
+              onClick={() => eegConnect("live")}
+              disabled={eegConnecting}
+            >
+              {eegConnecting ? "Connecting..." : "Live EEG"}
+            </button>
+          </div>
         ) : (
           <button
             className="eeg-btn eeg-disconnect-btn"
             onClick={eegDisconnect}
           >
-            Disconnect EEG
+            Disconnect
           </button>
         )}
 
         {eegConnected && eegLastCommand && (
           <span className="eeg-indicator">
-            EEG: {eegLastCommand.command} ({Math.round(eegLastCommand.confidence * 100)}%)
+            {eegLastCommand.command} ({Math.round(eegLastCommand.confidence * 100)}%)
           </span>
         )}
 
         {eegError && <span className="eeg-error">{eegError}</span>}
 
-        {!eegConnected && <span className="demo-badge">DEMO MODE</span>}
-        {eegConnected && <span className="eeg-badge">EEG LIVE</span>}
+        {!eegConnected && <span className="demo-badge">KEYBOARD MODE</span>}
+        {eegConnected && <span className="eeg-badge">EEG ACTIVE</span>}
       </header>
 
       <main className="game-container">

@@ -56,13 +56,13 @@ export function useEEGInput(onCommand: (command: string) => void) {
     };
   }, []);
 
-  const connect = useCallback(async () => {
+  const connect = useCallback(async (mode: "demo" | "live" = "demo") => {
     if (!serviceRef.current) return;
     setIsConnecting(true);
     setError(null);
 
     try {
-      const result = await serviceRef.current.connectHeadset();
+      const result = await serviceRef.current.connectHeadset(mode);
       if (result.status === "connected") {
         serviceRef.current.startStream();
       } else {

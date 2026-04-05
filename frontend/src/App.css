@@ -249,6 +249,11 @@ body {
 }
 
 /* EEG Controls */
+.eeg-buttons {
+  display: flex;
+  gap: 8px;
+}
+
 .eeg-btn {
   padding: 6px 16px;
   border: none;
@@ -262,6 +267,11 @@ body {
 .eeg-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+.eeg-demo-btn {
+  background: var(--accent-blue);
+  color: #000;
 }
 
 .eeg-connect-btn {
